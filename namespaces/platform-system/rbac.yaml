@@ -1,0 +1,47 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: platform-system
+  name: platform-admin
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: platform-admin-binding
+  namespace: platform-system
+subjects:
+  - kind: Group
+    name: "org/platform-team"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: platform-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: platform-system
+  name: platform-view
+rules:
+  - apiGroups: [""]
+    resources: ["pods","services","deployments","configmaps"]
+    verbs: ["get","list","watch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: platform-view-binding
+  namespace: platform-system
+subjects:
+  - kind: Group
+    name: "org/dev-team"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: platform-view
+  apiGroup: rbac.authorization.k8s.io

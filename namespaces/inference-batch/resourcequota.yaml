@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: ib-quota
+  namespace: inference-batch
+spec:
+  hard:
+    requests.cpu: "8"
+    requests.memory: 32Gi
+    limits.cpu: "16"
+    limits.memory: 64Gi
+    pods: "30"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: ib-limits
+  namespace: inference-batch
+spec:
+  limits:
+    - default:
+        cpu:  "2"
+        memory: "4Gi"
+      defaultRequest:
+        cpu: "500m"
+        memory: "1Gi"
+      type: Container
+

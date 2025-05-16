@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: fs-quota
+  namespace: feature-store
+spec:
+  hard:
+    requests.cpu: "4"
+    requests.memory: 8Gi
+    limits.cpu: "8"
+    limits.memory: 16Gi
+    pods: "20"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: fs-limits
+  namespace: feature-store
+spec:
+  limits:
+    - default:
+        cpu:  "1"
+        memory: "2Gi"
+      defaultRequest:
+        cpu: "200m"
+        memory: "512Mi"
+      type: Container

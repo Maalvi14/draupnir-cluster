@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: io-quota
+  namespace: inference-online
+spec:
+  hard:
+    requests.cpu: "10"
+    requests.memory: 16Gi
+    limits.cpu: "20"
+    limits.memory: 32Gi
+    pods: "50"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: io-limits
+  namespace: inference-online
+spec:
+  limits:
+    - default:
+        cpu:  "500m"
+        memory: "1Gi"
+      defaultRequest:
+        cpu: "250m"
+        memory: "512Mi"
+      type: Container

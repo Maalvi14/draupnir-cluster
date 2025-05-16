@@ -1,0 +1,24 @@
+``` yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sandbox-isolation
+  namespace: runtimes-sandbox
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+  # Allow ingress only from infra-ops for shared services (e.g., image registry)
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              role: infra-ops
+  # Egress allowed to infra-ops (registry/logging) and ci-cd (artifact storage)
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              role: infra-ops
+        - namespaceSelector:
+            matchLabels:
+              role: ci-cd

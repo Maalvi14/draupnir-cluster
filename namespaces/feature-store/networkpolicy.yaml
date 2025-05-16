@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ml-pipelines
+  namespace: feature-store
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: training-gpu
+        - namespaceSelector:
+            matchLabels:
+              name: model-registry
+        - namespaceSelector:
+            matchLabels:
+              name: inference-online
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: training-gpu
+        - namespaceSelector:
+            matchLabels:
+              name: model-registry
+        - namespaceSelector:
+            matchLabels:
+              name: inference-online
+        - namespaceSelector:
+            matchLabels:
+              name: infra-ops

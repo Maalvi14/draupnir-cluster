@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-from-platform-and-apps
+  namespace: infra-ops
+spec:
+  podSelector: {}
+  policyTypes: [Ingress,Egress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              role: control-plane
+        - namespaceSelector:
+            matchLabels:
+              role: inference
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              role: control-plane
+        - namespaceSelector:
+            matchLabels:
+              role: inference
+    - to:   # allow outbound to internet for scraping public metrics
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - protocol: TCP
+          port: 443

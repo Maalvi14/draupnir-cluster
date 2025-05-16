@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ml-components
+  namespace: model-registry
+spec:
+  podSelector: {}
+  policyTypes: [Ingress,Egress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              role: training-gpu    # for ingestion of new models
+        - namespaceSelector:
+            matchLabels:
+              role: inference-online # for serving
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              role: infra-ops       # for storage backend, e.g. S3

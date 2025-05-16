@@ -1,0 +1,70 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: training-gpu
+  name: gpu-admin
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gpu-admin-binding
+  namespace: training-gpu
+subjects:
+  - kind: Group
+    name: "org/ml-team"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: gpu-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: training-gpu
+  name: gpu-runner
+rules:
+  - apiGroups: ["batch","kubeflow.org","kubeflow.org/v1"]
+    resources: ["jobs","tfjobs","pytorchjobs","sparkjobs","pods"]
+    verbs: ["create","get","list","watch","delete"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gpu-runner-binding
+  namespace: training-gpu
+subjects:
+  - kind: ServiceAccount
+    name: gpu-runner-sa
+roleRef:
+  kind: Role
+  name: gpu-runner
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: training-gpu
+  name: gpu-view
+rules:
+  - apiGroups: [""]
+    resources: ["pods","jobs"]
+    verbs: ["get","list","watch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gpu-view-binding
+  namespace: training-gpu
+subjects:
+  - kind: Group
+    name: "org/ml-team"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: gpu-view
+  apiGroup: rbac.authorization.k8s.io

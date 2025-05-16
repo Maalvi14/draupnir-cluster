@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-registry-and-platform
+  namespace: ci-cd
+spec:
+  podSelector: {}
+  policyTypes: [ Egress ]
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: infra-ops       # image registry
+        - namespaceSelector:
+            matchLabels:
+              name: platform-system # controllers API
+      ports:
+        - protocol: TCP
+          port: 5000             # registry port
+        - protocol: TCP
+          port: 6443             # API server
+    - to:                        # allow DNS
+        - ipBlock:
+            cidr: 10.43.0.0/16
+      ports:
+        - protocol: UDP
+          port: 53

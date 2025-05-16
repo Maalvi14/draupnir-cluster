@@ -1,0 +1,47 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: runtimes-sandbox
+  name: sandbox-admin
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sandbox-admin-binding
+  namespace: runtimes-sandbox
+subjects:
+  - kind: Group
+    name: "org/platform-team"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: sandbox-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: runtimes-sandbox
+  name: sandbox-developer
+rules:
+  - apiGroups: [""]
+    resources: ["pods","deployments","services","configmaps"]
+    verbs: ["get","list","watch","create","update","patch","delete"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sandbox-dev-binding
+  namespace: runtimes-sandbox
+subjects:
+  - kind: Group
+    name: "org/dev-team"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: sandbox-developer
+  apiGroup: rbac.authorization.k8s.io

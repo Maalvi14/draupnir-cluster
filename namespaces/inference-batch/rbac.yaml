@@ -1,0 +1,71 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: inference-batch
+  name: ib-admin
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: ib-admin-binding
+  namespace: inference-batch
+subjects:
+  - kind: Group
+    name: "org/ml-team"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: ib-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: inference-batch
+  name: ib-runner
+rules:
+  - apiGroups: ["batch","kubeflow.org"]
+    resources: ["jobs","batchinferences","pods"]
+    verbs: ["create","get","list","watch","delete"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: ib-runner-binding
+  namespace: inference-batch
+subjects:
+  - kind: ServiceAccount
+    name: batch-runner-sa
+    namespace: inference-batch
+roleRef:
+  kind: Role
+  name: ib-runner
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: inference-batch
+  name: ib-view
+rules:
+  - apiGroups: [""]
+    resources: ["pods","jobs","services"]
+    verbs: ["get","list","watch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: ib-view-binding
+  namespace: inference-batch
+subjects:
+  - kind: Group
+    name: "org/analytics-team"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: ib-view
+  apiGroup: rbac.authorization.k8s.io

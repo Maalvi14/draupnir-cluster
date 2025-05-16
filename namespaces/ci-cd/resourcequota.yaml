@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: cicd-quota
+  namespace: ci-cd
+spec:
+  hard:
+    requests.cpu: "8"
+    requests.memory: 16Gi
+    limits.cpu: "16"
+    limits.memory: 32Gi
+    pods: "50"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cicd-limits
+  namespace: ci-cd
+spec:
+  limits:
+    - default:
+        cpu:  "1"
+        memory: "2Gi"
+      defaultRequest:
+        cpu: "200m"
+        memory: "512Mi"
+      type: Container

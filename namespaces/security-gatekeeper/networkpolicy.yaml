@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-api-and-platform
+  namespace: security-gatekeeper
+spec:
+  podSelector: {}        # all Gatekeeper/Kyverno pods
+  policyTypes: 
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system       # API server lives here
+        - namespaceSelector:
+            matchLabels:
+              name: platform-system
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system
+        - namespaceSelector:
+            matchLabels:
+              name: platform-system

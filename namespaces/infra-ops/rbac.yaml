@@ -1,0 +1,50 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: infra-ops
+  name: infra-admin
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: infra-admin-binding
+  namespace: infra-ops
+subjects:
+  - kind: Group
+    name: "org/infra-team"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: infra-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: infra-ops
+  name: infra-view
+rules:
+  - apiGroups: [""]
+    resources: ["pods","services","configmaps","secrets"]
+    verbs: ["get","list","watch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: infra-view-binding
+  namespace: infra-ops
+subjects:
+  - kind: Group
+    name: "org/platform-team"
+    apiGroup: rbac.authorization.k8s.io
+  - kind: Group
+    name: "org/dev-team"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: infra-view
+  apiGroup: rbac.authorization.k8s.io

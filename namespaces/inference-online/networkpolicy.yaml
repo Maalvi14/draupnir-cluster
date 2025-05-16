@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-registry-and-traffic
+  namespace: inference-online
+spec:
+  podSelector: {}
+  policyTypes: [Ingress,Egress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              role: model-registry   # to pull models
+        - namespaceSelector:
+            matchLabels:
+              role: infra-ops        # API gateway, logging
+      ports:
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 9000                # gRPC
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              role: model-registry
+        - namespaceSelector:
+            matchLabels:
+              role: infra-ops

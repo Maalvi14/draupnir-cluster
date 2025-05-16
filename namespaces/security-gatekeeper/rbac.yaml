@@ -1,0 +1,50 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: security-gatekeeper
+  name: sec-admin
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sec-admin-binding
+  namespace: security-gatekeeper
+subjects:
+  - kind: Group
+    name: "org/security-team"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: sec-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: security-gatekeeper
+  name: sec-audit
+rules:
+  - apiGroups: [""]
+    resources: ["pods","deployments","events","pods/log"]
+    verbs: ["get","list","watch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: sec-audit-binding
+  namespace: security-gatekeeper
+subjects:
+  - kind: Group
+    name: "org/audit-team"
+    apiGroup: rbac.authorization.k8s.io
+  - kind: Group
+    name: "org/platform-team"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: sec-audit
+  apiGroup: rbac.authorization.k8s.io

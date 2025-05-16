@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: gpu-quota
+  namespace: training-gpu
+spec:
+  hard:
+    limits.nvidia.com/gpu: "4"      # max 4 GPUs
+    requests.cpu: "16"
+    requests.memory: 64Gi
+    limits.cpu: "32"
+    limits.memory: 128Gi
+    pods: "20"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: gpu-limits
+  namespace: training-gpu
+spec:
+  limits:
+    - default:
+        cpu:  "4"
+        memory: "16Gi"
+      defaultRequest:
+        cpu: "2"
+        memory: "8Gi"
+      type: Container

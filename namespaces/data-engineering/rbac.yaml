@@ -1,0 +1,70 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: data-engineering
+  name: data-admin
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: data-admin-binding
+  namespace: data-engineering
+subjects:
+  - kind: Group
+    name: "org/data-team"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: data-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: data-engineering
+  name: data-runner
+rules:
+  - apiGroups: ["batch","apps"]
+    resources: ["jobs","cronjobs"]
+    verbs: ["create","get","list","watch","delete"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: data-runner-binding
+  namespace: data-engineering
+subjects:
+  - kind: ServiceAccount
+    name: data-runner-sa
+roleRef:
+  kind: Role
+  name: data-runner
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: data-engineering
+  name: data-view
+rules:
+  - apiGroups: [""]
+    resources: ["pods","jobs","cronjobs","configmaps","secrets"]
+    verbs: ["get","list","watch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: data-view-binding
+  namespace: data-engineering
+subjects:
+  - kind: Group
+    name: "org/analytics-team"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: data-view
+  apiGroup: rbac.authorization.k8s.io
